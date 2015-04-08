@@ -11,6 +11,7 @@ samples = require './sample-data'
 
 users = samples.users
 game = samples.game
+newgame = samples.newgame
 moves = samples.moves
 
 describe "turngame-api", ->
@@ -77,6 +78,27 @@ describe "turngame-api", ->
         go()
           .get endpoint("/auth/#{users.jdoe.token}/games/bad-#{game.id}")
           .expect 404, done
+
+    describe 'POST /auth/:token/games/:id', () ->
+      it 'requires valid authToken', (done) ->
+        go()
+          .post endpoint("/auth/invalid-token/games/#{newgame.id}")
+          .expect 401, done
+
+      it 'only game participants are allowed', (done) ->
+        go()
+          .post endpoint("/auth/#{users.jdoe.token}/games/#{newgame.id}")
+          .send newgame
+          .expect 403, done
+
+      it 'let us create games', (done) ->
+        go()
+          .post endpoint("/auth/#{users.alice.token}/games/#{newgame.id}")
+          .send newgame
+          .expect 200
+          .end (err, res) ->
+            expect(res.body).to.eql(samples.newgameOutcome)
+            done()
 
     describe 'GET /auth/:token/games/:id/moves', () ->
       it 'retrieves moves made in a game', (done) ->

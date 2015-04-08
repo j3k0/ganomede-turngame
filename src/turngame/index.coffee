@@ -1,11 +1,10 @@
 restify = require 'restify'
 authdb = require 'authdb'
 redis = require 'redis'
-urllib = require 'url'
 config = require '../../config'
 log = require '../log'
 Games = require './games'
-RulesClient = require './rules-client'
+rulesClients = require './rules-clients'
 
 clone = (obj) -> JSON.parse(JSON.stringify(obj))
 
@@ -52,6 +51,7 @@ module.exports = (options={}) ->
 
     games.state gameId, (err, state) ->
       if (err)
+        log.error(err)
         return next(new restify.InternalServerError)
 
       if (!state)
@@ -69,12 +69,44 @@ module.exports = (options={}) ->
   # Routes
   #
 
+  createGame = (req, res, next) ->
+    gameId = req.params.gameId
+    type = req.body?.type
+    players = req.body?.players
+    gameConfig = req.body?.gameConfig
+    if !gameId
+      return next(new restify.BadRequestError('MissingGameId'))
+    if !type
+      return next(new restify.BadRequestError('MissingType'))
+    if !players || !players.length
+      return next(new restify.BadRequestError('MissingPlayers'))
+    game =
+      id: gameId
+      type: type
+      players: players
+      gameConfig: gameConfig
+
+    participant = 0 <= players.indexOf(req.params.user.username)
+    if !participant
+      return next(new restify.ForbiddenError)
+
+    rules = rulesClients(game.type)
+    rules.games game, (err, state) ->
+      if (err)
+        return next(err)
+      games.setState gameId, state, (err) ->
+        if (err)
+          return next(err)
+        res.send state
+        next()
+
   retrieveGame = (req, res, next) ->
     res.json(req.params.game)
 
   retrieveMoves = (req, res, next) ->
     games.moves req.params.game.id, (err, moves) ->
       if (err)
+        log.error(err)
         return next(new restify.InternalServerError)
 
       res.json(moves)
@@ -103,18 +135,11 @@ module.exports = (options={}) ->
   verifyMove = (req, res, next) ->
     game = clone(req.params.game)
     game.moveData = req.body.moveData
-
-    rules = new RulesClient restify.createJsonClient(
-      url: urllib.format
-        protocol: 'http'
-        hostname: config.rules.host
-        port: config.rules.port
-        pathname: game.type
-    )
-
+    rules = rulesClients(game.type)
     rules.moves game, (err, rulesErr, newState) ->
       if (err)
         # Something's wrong with HTTP request, not necessarily move itself.
+        log.error(err)
         return next(new restify.InternalServerError)
 
       if (rulesErr)
@@ -140,6 +165,7 @@ module.exports = (options={}) ->
 
     games.addMove newState.id, newState, move, (err) ->
       if (err)
+        log.error(err)
         return next(new restify.InternalServerError)
 
       res.json(newState)
@@ -147,6 +173,8 @@ module.exports = (options={}) ->
 
   return (prefix, server) ->
     # Single Game
+    server.post "/#{prefix}/auth/:authToken/games/:gameId",
+      authMiddleware, createGame
     server.get "/#{prefix}/auth/:authToken/games/:gameId",
       authMiddleware, retrieveGameMiddleware, participantsOnly, retrieveGame
     server.get "/#{prefix}/auth/:authToken/games/:gameId/moves",

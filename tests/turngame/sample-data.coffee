@@ -17,6 +17,18 @@ game =
     total: 90
     nMoves: 1
 
+newgame =
+  id: 'newgame-id'
+  type: 'substract-game/v1'
+  players: ['alice', 'bob']
+newgameOutcome =
+  id: 'newgame-id'
+  type: 'substract-game/v1'
+  players: [ 'alice', 'bob' ]
+  turn: 'alice'
+  status: 'active'
+  gameData: { total: 200, nMoves: 0 }
+
 moves = [
   {player: game.players[0], move: {number: 10}}
 ]
@@ -38,6 +50,8 @@ gameNew.gameData =
 module.exports =
   users: users
   game: game
+  newgame: newgame
+  newgameOutcome: newgameOutcome
   gameNew: gameNew
   moves: moves
   nextMove: nextMove
