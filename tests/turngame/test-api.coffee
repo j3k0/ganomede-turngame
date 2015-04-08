@@ -18,6 +18,8 @@ describe "turngame-api", ->
   authdb = fakeAuthDb.createClient()
   games = new Games(redis, config.redis.prefix)
   go = supertest.bind(supertest, server)
+  substract = require "ganomede-substract-game"
+  substractServer = substract.create()
 
   endpoint = (path) ->
     return "/#{config.routePrefix}#{path || ''}"
@@ -36,6 +38,7 @@ describe "turngame-api", ->
     vasync.parallel
       funcs: [
         server.listen.bind(server)
+        substractServer.listen.bind(substractServer, 8080)
         games.setState.bind(games, game.id, game)
         (cb) -> vasync.forEachParallel
           func: games.addMove.bind(games, game.id, game)
@@ -44,7 +47,10 @@ describe "turngame-api", ->
       ], done
 
   after (done) ->
-    server.close(redis.flushdb.bind(redis, done))
+    server.close(
+      redis.flushdb.bind(null, redis,
+      substractServer.close.bind(null,
+      done)))
 
   describe 'Single Game', () ->
     describe 'GET /auth/:token/games/:id', () ->
