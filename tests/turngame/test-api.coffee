@@ -47,10 +47,10 @@ describe "turngame-api", ->
       ], done
 
   after (done) ->
-    server.close(
-      redis.flushdb.bind(null, redis,
-      substractServer.close.bind(null,
-      done)))
+    server.close ->
+      redis.flushdb redis, ->
+        substractServer.close() # Why doesn't this trigger a callback?
+        done()
 
   describe 'Single Game', () ->
     describe 'GET /auth/:token/games/:id', () ->
