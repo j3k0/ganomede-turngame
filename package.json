@@ -1,9 +1,8 @@
 {
-  "name": "turngame",
-  "version": "1.0.1",
+  "name": "ganomede-turngame",
+  "version": "1.1.0",
   "api": "turngame/v1",
-  "description": "turngame micro service",
-  "private": true,
+  "description": "Ganomede turngame micro service",
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/forever start index.js",
@@ -11,7 +10,7 @@
     "test": "make test"
   },
   "author": "Jean-Christophe Hoelt <hoelt@fovea.cc>",
-  "license": "Private",
+  "license": "GPL",
   "dependencies": {
     "authdb": "^0.1.0",
     "blanket": "^1.1.6",
