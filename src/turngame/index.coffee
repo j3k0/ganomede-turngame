@@ -183,7 +183,4 @@ module.exports = (options={}) ->
       authMiddleware, retrieveGameMiddleware, participantsOnly,
       validateMoveData, verifyMove, addMove
 
-    # TODO:
-    # Game Collection
-
 # vim: ts=2:sw=2:et:
