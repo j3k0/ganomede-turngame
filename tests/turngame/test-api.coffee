@@ -132,7 +132,7 @@ describe "turngame-api", ->
       (done) ->
         go()
           .post endpoint("/auth/#{users.alice.token}/games/#{game.id}/moves")
-          .send {moveData: samples.nextMove.move}
+          .send {moveData: samples.nextMove.moveData}
           .expect 400
           .end (err, res) ->
             expect(err).to.be(null)
@@ -143,7 +143,7 @@ describe "turngame-api", ->
       it 'adds move to a game and returns new game state', (done) ->
         go()
           .post endpoint("/auth/#{users.bob.token}/games/#{game.id}/moves")
-          .send {moveData: samples.nextMove.move}
+          .send {moveData: samples.nextMove.moveData}
           .expect 200
           .end (err, res) ->
             expect(err).to.be(null)
@@ -155,7 +155,7 @@ describe "turngame-api", ->
       (done) ->
         go()
           .post endpoint("/auth/#{users.bob.token}/games/#{game.id}/moves")
-          .send {moveData: samples.nextMove.move}
+          .send {moveData: samples.nextMove.moveData}
           .expect 423, done
 
       # Following test check some edge-cases which are in middleware

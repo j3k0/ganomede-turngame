@@ -155,7 +155,7 @@ module.exports = (options={}) ->
       req.params.newGameState = newState
       req.params.newMove =
         player: game.turn
-        move: game.moveData
+        moveData: game.moveData
 
       next()
 
