@@ -5,6 +5,7 @@ config = require '../../config'
 log = require '../log'
 Games = require './games'
 rulesClients = require './rules-clients'
+helpers = require 'ganomede-helpers'
 
 clone = (obj) -> JSON.parse(JSON.stringify(obj))
 
@@ -27,21 +28,8 @@ module.exports = (options={}) ->
   #
 
   # Populates req.params.user with value returned from authDb.getAccount()
-  authMiddleware = (req, res, next) ->
-    authToken = req.params.authToken
-    if !authToken
-      return next(new restify.InvalidContentError('invalid content'))
-
-    authdbClient.getAccount authToken, (err, account) ->
-      if err || !account
-        if err
-          log.error 'authdbClient.getAccount() failed',
-            err: err
-            token: authToken
-        return next(new restify.UnauthorizedError('not authorized'))
-
-      req.params.user = account
-      next()
+  authMiddleware = helpers.restify.middlewares.authdb.create
+    authdbClient: authdbClient
 
   # Populates req.params.game with game's state based in req.params.gameId
   retrieveGameMiddleware = (req, res, next) ->
