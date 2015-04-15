@@ -38,6 +38,7 @@ describe "turngame-api", ->
     # add game and moves to redis, listen on port
     vasync.parallel
       funcs: [
+        redis.flushdb.bind(redis)
         server.listen.bind(server)
         substractServer.listen.bind(substractServer, 8080)
         games.setState.bind(games, game.id, game)
@@ -49,9 +50,8 @@ describe "turngame-api", ->
 
   after (done) ->
     server.close ->
-      redis.flushdb redis, ->
-        substractServer.close() # Why doesn't this trigger a callback?
-        done()
+      substractServer.close() # Why doesn't this trigger a callback?
+      done()
 
   describe 'Single Game', () ->
     describe 'GET /auth/:token/games/:id', () ->
