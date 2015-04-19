@@ -22,24 +22,28 @@ describe 'Games', () ->
     expect(key).to.be(expectedKey)
     expect(movesKey).to.be(expectedMovesKey)
 
-  it '#setState() updates state of game by game ID', (done) ->
-    games.setState game.id, game, (err) ->
-      expect(err).to.be(null)
-      done()
+  describe '#setState()', () ->
+    it 'updates state of game by game ID', (done) ->
+      games.setState game.id, game, (err) ->
+        expect(err).to.be(null)
+        done()
 
-  it '#state() retrieves game\'s state from redis by game ID', (done) ->
-    games.state game.id, (err, state) ->
-      expect(err).to.be(null)
-      expect(state).to.eql(game)
-      done()
+  describe '#state()', () ->
+    it 'retrieves game\'s state from redis by game ID', (done) ->
+      games.state game.id, (err, state) ->
+        expect(err).to.be(null)
+        expect(state).to.eql(game)
+        done()
 
-  it '#addMove() adds move to game by game ID', (done) ->
-    games.addMove game.id, game, moves[0], (err) ->
-      expect(err).to.be(null)
-      done()
+  describe '#addMove()', () ->
+    it '#addMove() adds move to game by game ID', (done) ->
+      games.addMove game.id, game, moves[0], (err) ->
+        expect(err).to.be(null)
+        done()
 
-  it '#moves() retrieves game\'s moves from redis by game ID', (done) ->
-    games.moves game.id, (err, movesReturned) ->
-      expect(err).to.be(null)
-      expect(movesReturned).to.eql(moves)
-      done()
+  describe '#moves()', () ->
+    it 'retrieves game\'s moves from redis by game ID', (done) ->
+      games.moves game.id, (err, movesReturned) ->
+        expect(err).to.be(null)
+        expect(movesReturned).to.eql(moves)
+        done()
