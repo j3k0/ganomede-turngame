@@ -21,6 +21,7 @@ describe "turngame-api", ->
   go = supertest.bind(supertest, server)
   substract = require "ganomede-substract-game"
   substractServer = substract.create()
+  notificationsSent = {}
 
   endpoint = (path) ->
     return "/#{config.routePrefix}#{path || ''}"
@@ -29,9 +30,16 @@ describe "turngame-api", ->
     for own username, accountInfo of users
       authdb.addAccount accountInfo.token, accountInfo
 
+    sendNotification = (notification, callback) ->
+      to = notification.to
+      received = notificationsSent[to] = notificationsSent[to] || []
+      received.push(notification)
+      process.nextTick(callback.bind(null, null))
+
     turngame = api
       authdbClient: authdb
       games: games
+      sendNotification: sendNotification
 
     turngame(config.routePrefix, server)
 
@@ -139,15 +147,25 @@ describe "turngame-api", ->
             expect(res.body.message).to.be('WaitForYourTurn')
             done()
 
-      # This will post a successful move as Bob and finish the game
+      # This will post a successful move as Bob and finish the game.
+      # We will also check, that Alice received notification here.
       it 'adds move to a game and returns new game state', (done) ->
         go()
           .post endpoint("/auth/#{users.bob.token}/games/#{game.id}/moves")
           .send {moveData: samples.nextMove.moveData}
           .expect 200
           .end (err, res) ->
+            # Correct move added, game updated.
             expect(err).to.be(null)
             expect(res.body).to.eql(samples.gameNew)
+            # Alice got a notification
+            received = notificationsSent[samples.users.alice.username]
+            expect(received).to.be.an(Array)
+            expect(received).to.have.length(1)
+            notification = received[0]
+            expect(notification.type).to.be('move')
+            expect(notification.data.game).to.eql(samples.gameNew)
+            # Done!
             done()
 
       # This is ran after game is finished.

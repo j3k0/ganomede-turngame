@@ -5,6 +5,7 @@ config = require '../../config'
 log = require '../log'
 Games = require './games'
 rulesClients = require './rules-clients'
+notifier = require './notifier'
 helpers = require 'ganomede-helpers'
 
 clone = (obj) -> JSON.parse(JSON.stringify(obj))
@@ -22,6 +23,8 @@ module.exports = (options={}) ->
     redis.createClient(config.redis.port, config.redis.host)
     config.redis.prefix
   )
+
+  sendNotification = options.sendNotification || helpers.Notification.sendFn(1)
 
   #
   # Middlewares
@@ -156,6 +159,9 @@ module.exports = (options={}) ->
         log.error(err)
         return next(new restify.InternalServerError)
 
+      # Notify everyone particpating in the game about this move
+      # and reply to original request.
+      notifier.moveMade(sendNotification, move.player, newState)
       res.json(newState)
       next()
 
