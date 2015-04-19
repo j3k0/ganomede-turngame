@@ -10,7 +10,7 @@ describe 'Games', () ->
   game = samples.game
   moves = samples.moves
 
-  after (done) ->
+  before (done) ->
     redis.flushdb(done)
 
   it '#key() generates redis keys', () ->
