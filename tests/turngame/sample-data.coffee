@@ -30,13 +30,13 @@ newgameOutcome =
   gameData: { total: 200, nMoves: 0 }
 
 moves = [
-  {player: game.players[0], move: {number: 10}}
+  {player: game.players[0], moveData: {number: 10}}
 ]
 
 # This is a new move someone makes.
 nextMove =
   player: game.players[1]
-  move: {number: 90}
+  moveData: {number: 90}
 
 # This is a game state after nextMove was made.
 gameNew = clone(game)
@@ -44,7 +44,7 @@ gameNew.status = 'gameover'
 gameNew.scores = [0, 20]
 gameNew.turn
 gameNew.gameData =
-  total: game.gameData.total - nextMove.move.number
+  total: game.gameData.total - nextMove.moveData.number
   nMoves: game.gameData.nMoves + 1
 
 module.exports =

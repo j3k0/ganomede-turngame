@@ -5,6 +5,8 @@ config = require '../../config'
 log = require '../log'
 Games = require './games'
 rulesClients = require './rules-clients'
+notifier = require './notifier'
+helpers = require 'ganomede-helpers'
 
 clone = (obj) -> JSON.parse(JSON.stringify(obj))
 
@@ -22,26 +24,15 @@ module.exports = (options={}) ->
     config.redis.prefix
   )
 
+  sendNotification = options.sendNotification || helpers.Notification.sendFn(1)
+
   #
   # Middlewares
   #
 
   # Populates req.params.user with value returned from authDb.getAccount()
-  authMiddleware = (req, res, next) ->
-    authToken = req.params.authToken
-    if !authToken
-      return next(new restify.InvalidContentError('invalid content'))
-
-    authdbClient.getAccount authToken, (err, account) ->
-      if err || !account
-        if err
-          log.error 'authdbClient.getAccount() failed',
-            err: err
-            token: authToken
-        return next(new restify.UnauthorizedError('not authorized'))
-
-      req.params.user = account
-      next()
+  authMiddleware = helpers.restify.middlewares.authdb.create
+    authdbClient: authdbClient
 
   # Populates req.params.game with game's state based in req.params.gameId
   retrieveGameMiddleware = (req, res, next) ->
@@ -155,7 +146,7 @@ module.exports = (options={}) ->
       req.params.newGameState = newState
       req.params.newMove =
         player: game.turn
-        move: game.moveData
+        moveData: game.moveData
 
       next()
 
@@ -168,6 +159,9 @@ module.exports = (options={}) ->
         log.error(err)
         return next(new restify.InternalServerError)
 
+      # Notify everyone particpating in the game about this move
+      # and reply to original request.
+      notifier.moveMade(sendNotification, move.player, newState)
       res.json(newState)
       next()
 
@@ -182,8 +176,5 @@ module.exports = (options={}) ->
     server.post "/#{prefix}/auth/:authToken/games/:gameId/moves",
       authMiddleware, retrieveGameMiddleware, participantsOnly,
       validateMoveData, verifyMove, addMove
-
-    # TODO:
-    # Game Collection
 
 # vim: ts=2:sw=2:et:
