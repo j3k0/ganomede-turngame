@@ -13,9 +13,15 @@ class Games
   key: (gameId, parts...) ->
     [@prefix, 'games', gameId].concat(parts).join(PREFIX_SEPARATOR)
 
-  # Save game state to redis
+  _updateExpire: (multi, id) ->
+    multi
+      .expire(@key(id), Games.EXPIRE_SECONDS)
+      .expire(@key(id, Games.MOVES_POSTFIX), Games.EXPIRE_SECONDS)
+
+  # Save game state to redis and set EXPIRE of state and movelist
   _setState: (multi, id, state) ->
     multi.set(@key(id), JSON.stringify(state))
+    @_updateExpire(multi, id)
 
   setState: (id, state, callback) ->
     @_setState(@multi(), id, state).exec (err, replies) ->
@@ -45,8 +51,8 @@ class Games
   # Add move to a game
   # (Also updates state as a part of a MULTI transaction.)
   _addMove: (multi, id, state, move) ->
+    multi.rpush(@key(id, Games.MOVES_POSTFIX), JSON.stringify(move))
     @_setState(multi, id, state)
-    multi.rpush(@key(id, 'moves'), JSON.stringify(move))
 
   addMove: (id, newState, move, callback) ->
     @_addMove(@multi(), id, newState, move).exec (err, replies) ->
@@ -61,7 +67,7 @@ class Games
 
   # Retrives list of moves made in game
   _moves: (multi, id) ->
-    multi.lrange @key(id, 'moves'), 0, -1
+    multi.lrange @key(id, Games.MOVES_POSTFIX), 0, -1
 
   moves: (id, callback) ->
     @_moves(@multi(), id).exec (err, replies) ->
@@ -73,5 +79,8 @@ class Games
 
       moves = replies[0]
       callback(null, moves.map (move) -> JSON.parse(move))
+
+  @EXPIRE_SECONDS: 30 * 24 * 3600 # 30 days
+  @MOVES_POSTFIX: 'moves'
 
 module.exports = Games
