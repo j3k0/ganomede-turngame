@@ -17,6 +17,9 @@ Configuration
 
  * `RULES_PORT_8080_TCP_ADDR` - IP of the rules service
  * `RULES_PORT_8080_TCP_PORT` - Port of the rules service
+ * `NOTIFICATIONS_PORT_8080_TCP_ADDR` - IP of the notifications service
+ * `NOTIFICATIONS_PORT_8080_TCP_PORT` - Port of the notifications service
+ * `API_SECRET` - Secret key used to send notifications
  * `REDIS_AUTH_PORT_6379_TCP_ADDR` - IP of the AuthDB redis
  * `REDIS_AUTH_PORT_6379_TCP_PORT` - Port of the AuthDB redis
  * `REDIS_GAMES_PORT_6379_TCP_ADDR` - IP of the games redis
