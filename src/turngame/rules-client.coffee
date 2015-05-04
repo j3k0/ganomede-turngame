@@ -15,7 +15,7 @@ class RulesClient
       throw new Error('jsonClient required')
 
     @client = jsonClient
-    @log = log.child rulesClient:@
+    @log = log.child rulesClient:@client.url?.pathname
     @log.info { pathname:@client.url?.pathname }, "RulesClient created"
 
   endpoint: (subpath) ->
@@ -27,10 +27,10 @@ class RulesClient
     @games {id: 'whatever', players: ['whoever']}, (err, state) ->
       callback(err, state?.gameData)
 
-  games: (options, callback) ->
+  games: (game, callback) ->
     url = @endpoint('/games')
     @log.info { url:url }, "post /games"
-    @client.post url, options, (err, req, res, body) =>
+    @client.post url, game, (err, req, res, body) =>
       if (err)
         @log.error "failed to generate game", err
         return callback(err)
@@ -39,6 +39,7 @@ class RulesClient
         @log.error "game generated with code", {code:res.statusCode}
         return callback(new Error "HTTP#{res.statusCode}")
 
+      @copyGameFields game, body
       callback(null, body)
 
   # POST /moves
@@ -62,7 +63,14 @@ class RulesClient
             game: game
           return callback(err)
 
+      @copyGameFields game, body
       callback(null, null, body)
+
+  copyGameFields: (src, dst) ->
+    dst.id = src.id
+    dst.type = src.type
+    dst.players = src.players
+    if src.gameConfig then dst.gameConfig = src.gameConfig
 
   # This takes in an initial state, and sends a buhch of moves to rules service.
   # Returns new game state after all the moves if every move is correct one
