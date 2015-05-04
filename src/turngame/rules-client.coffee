@@ -15,6 +15,8 @@ class RulesClient
       throw new Error('jsonClient required')
 
     @client = jsonClient
+    @log = log.child rulesClient:@
+    @log.info { pathname:@client.url?.pathname }, "RulesClient created"
 
   endpoint: (subpath) ->
     return "#{@client.url?.pathname || ''}#{subpath}"
@@ -26,13 +28,15 @@ class RulesClient
       callback(err, state?.gameData)
 
   games: (options, callback) ->
-    @client.post @endpoint('/games'), options, (err, req, res, body) ->
+    url = @endpoint('/games')
+    @log.info { url:url }, "post /games"
+    @client.post url, options, (err, req, res, body) =>
       if (err)
-        log.error "failed to generate game", err
+        @log.error "failed to generate game", err
         return callback(err)
 
       if (res.statusCode != 200)
-        log.error "game generated with code", {code:res.statusCode}
+        @log.error "game generated with code", {code:res.statusCode}
         return callback(new Error "HTTP#{res.statusCode}")
 
       callback(null, body)
@@ -41,17 +45,19 @@ class RulesClient
   # @game should contain moveData to post
   # callback(err, rulesError, newState)
   moves: (game, callback) ->
-    @client.post @endpoint('/moves'), game, (err, req, res, body) ->
+    url = @endpoint('/moves')
+    @log.info { url:url }, "post /moves"
+    @client.post url, game, (err, req, res, body) =>
       if (err)
         restifyError = body && (err instanceof restify.RestError)
         if restifyError
-          log.warn 'RulesClient.moves() rejected move with rules error',
+          @log.warn 'RulesClient.moves() rejected move with rules error',
             err: err
             rulesErr: body
             game: game
           return callback(null, err)
         else
-          log.error 'RulesClient.moves() failed',
+          @log.error 'RulesClient.moves() failed',
             err: err
             game: game
           return callback(err)

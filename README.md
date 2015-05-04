@@ -55,11 +55,6 @@ Possible status:
  * `active`
  * `gameover`
 
-# Games Collection [/turngame/v1/auth/:token/games]
-
-    + Parameters
-        + token (string) ... User authentication token
-
 ## Create a game [POST]
 
 Use the appropriate `rules-api` service to initiate a new game.
