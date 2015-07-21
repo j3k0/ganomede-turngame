@@ -17,12 +17,28 @@ moveMade = (sendNotification, player, newState, callback) ->
     return username != player
 
   send = (username, cb) ->
-    notification = new Notification
+
+    ndata =
       from: pkg.api
       to: username
       type: moveMade.NOTIFICATION_TYPE
       data:
         game: newState
+
+    # Push notification
+    if username == newState.turn
+      if newState.state == "active"
+        ndata.push =
+          app: newState.type
+          title: [ "your_turn_title" ]
+          message: [ "your_turn_message", player ]
+      else if newState.state == "gameover"
+        ndata.push =
+          app: newState.type
+          title: [ "game_over_title" ]
+          message: [ "game_over_message", player ]
+
+    notification = new Notification ndata
 
     sendNotification notification, (err) ->
       if (err)
@@ -41,3 +57,5 @@ moveMade.NOTIFICATION_TYPE = 'move'
 
 module.exports =
   moveMade: moveMade
+
+# vim: ts=2:sw=2:et:
