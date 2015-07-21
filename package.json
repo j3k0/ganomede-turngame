@@ -1,6 +1,6 @@
 {
   "name": "turngame",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "api": "turngame/v1",
   "description": "Ganomede turngame micro service",
   "main": "index.js",
@@ -21,7 +21,7 @@
     "eslint": "^0.10.0",
     "forever": "^0.13.0",
     "newrelic": "^1.20.2",
-    "ganomede-helpers": "^0.3.2",
+    "ganomede-helpers": "^0.4.2",
     "jshint": "^2.5.10",
     "mocha": "^2.0.1",
     "redis": "^0.12.1",
