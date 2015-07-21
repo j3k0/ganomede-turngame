@@ -26,6 +26,10 @@ moveMade = (sendNotification, player, newState, callback) ->
         game: newState
 
     # Push notification
+    log.info "push-notification",
+      username: username
+      turn: newState.turn
+      state: newState.state
     if username == newState.turn
       pushLocKeys =
         active: "your_turn"
@@ -36,6 +40,7 @@ moveMade = (sendNotification, player, newState, callback) ->
         message: [ "#{pushLocKeys[state]}_message", player ]
       if pushLocKeys[newState.state]
         ndata.push = pushData(newState.state)
+    log.info "notification", ndata
 
     notification = new Notification ndata
 
