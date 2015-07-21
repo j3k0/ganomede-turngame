@@ -27,16 +27,15 @@ moveMade = (sendNotification, player, newState, callback) ->
 
     # Push notification
     if username == newState.turn
-      if newState.state == "active"
-        ndata.push =
-          app: newState.type
-          title: [ "your_turn_title" ]
-          message: [ "your_turn_message", player ]
-      else if newState.state == "gameover"
-        ndata.push =
-          app: newState.type
-          title: [ "game_over_title" ]
-          message: [ "game_over_message", player ]
+      pushLocKeys =
+        active: "your_turn"
+        gameover: "game_over"
+      pushData = (state) ->
+        app: newState.type
+        title: [ "#{pushLocKeys[state]}_title" ]
+        message: [ "#{pushLocKeys[state]}_message", player ]
+      if pushLocKeys[newState.state]
+        ndata.push = pushData(newState.state)
 
     notification = new Notification ndata
 
