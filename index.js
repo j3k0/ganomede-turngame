@@ -19,6 +19,7 @@ if (cluster.isMaster) {
     log.info("running with env", process.env);
     log.info("running with config", config);
     cluster.fork();
+    cluster.fork(); // Start 2, so when 1 fails there's not downtime.
     cluster.on("disconnect", function(worker) {
         log.error("disconnect!");
         cluster.fork();
