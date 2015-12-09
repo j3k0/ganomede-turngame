@@ -36,16 +36,29 @@ moves = [
 # This is a new move someone makes.
 nextMove =
   player: game.players[1]
-  moveData: {number: 90}
+  moveData: {number: 89}
 
 # This is a game state after nextMove was made.
 gameNew = clone(game)
-gameNew.status = 'gameover'
-gameNew.scores = [0, 20]
-gameNew.turn
+gameNew.scores = [0, 0]
+gameNew.turn = game.players[0]
 gameNew.gameData =
   total: game.gameData.total - nextMove.moveData.number
   nMoves: game.gameData.nMoves + 1
+
+# This is a third move someone makes.
+thirdMove =
+  player: game.players[0]
+  moveData: {number: 1}
+  chatEvent: 'small_move'
+
+# This is a game state after thirdMove was made.
+gameThird = clone(gameNew)
+gameThird.status = 'gameover'
+gameThird.scores = [30, 0]
+gameThird.gameData =
+  total: gameNew.gameData.total - thirdMove.moveData.number
+  nMoves: gameNew.gameData.nMoves + 1
 
 module.exports =
   users: users
@@ -55,3 +68,5 @@ module.exports =
   gameNew: gameNew
   moves: moves
   nextMove: nextMove
+  thirdMove: thirdMove
+  gameThird: gameThird

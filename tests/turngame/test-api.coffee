@@ -22,6 +22,7 @@ describe "turngame-api", ->
   substract = require "ganomede-substract-game"
   substractServer = substract.create()
   notificationsSent = {}
+  chatSent = {}
 
   endpoint = (path) ->
     return "/#{config.routePrefix}#{path || ''}"
@@ -36,10 +37,18 @@ describe "turngame-api", ->
       received.push(notification)
       process.nextTick(callback.bind(null, null))
 
+    sendChat = (chat, callback) ->
+      chat.users.forEach (to) ->
+        received = chatSent[to] = chatSent[to] || []
+        received.push(chat)
+      if callback
+        process.nextTick(callback.bind(null, null))
+
     turngame = api
       authdbClient: authdb
       games: games
       sendNotification: sendNotification
+      sendChat: sendChat
 
     turngame(config.routePrefix, server)
 
@@ -152,7 +161,7 @@ describe "turngame-api", ->
       it 'adds move to a game and returns new game state', (done) ->
         go()
           .post endpoint("/auth/#{users.bob.token}/games/#{game.id}/moves")
-          .send {moveData: samples.nextMove.moveData}
+          .send moveData: samples.nextMove.moveData
           .expect 200
           .end (err, res) ->
             # Correct move added, game updated.
@@ -168,11 +177,31 @@ describe "turngame-api", ->
             # Done!
             done()
 
+      it 'allows to send chat events', (done) ->
+        go()
+          .post endpoint("/auth/#{users.alice.token}/games/#{game.id}/moves")
+          .send
+            moveData: samples.thirdMove.moveData
+            chatEvent: samples.thirdMove.chatEvent
+          .expect 200
+          .end (err, res) ->
+            # Correct move added, game updated.
+            expect(err).to.be(null)
+            expect(res.body).to.eql(samples.gameThird)
+            # Alice and bob received a chat for the move, one for gameover
+            received = chatSent[samples.users.bob.username]
+            expect(received).to.be.an(Array)
+            expect(received).to.have.length(2)
+            received = chatSent[samples.users.alice.username]
+            expect(received).to.be.an(Array)
+            expect(received).to.have.length(2)
+            done()
+
       # This is ran after game is finished.
       it 'replies with http 423 when trying to make a move in a finished game',
       (done) ->
         go()
-          .post endpoint("/auth/#{users.bob.token}/games/#{game.id}/moves")
+          .post endpoint("/auth/#{users.alice.token}/games/#{game.id}/moves")
           .send {moveData: samples.nextMove.moveData}
           .expect 423, done
 

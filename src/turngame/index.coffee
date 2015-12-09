@@ -6,6 +6,7 @@ log = require '../log'
 Games = require './games'
 rulesClients = require './rules-clients'
 notifier = require './notifier'
+chat = require './chat'
 helpers = require 'ganomede-helpers'
 
 clone = (obj) -> JSON.parse(JSON.stringify(obj))
@@ -25,6 +26,8 @@ module.exports = (options={}) ->
   )
 
   sendNotification = options.sendNotification || helpers.Notification.sendFn(1)
+
+  sendChat = options.sendChat || helpers.Chat.sendFn(1)
 
   #
   # Middlewares
@@ -162,6 +165,10 @@ module.exports = (options={}) ->
       # Notify everyone particpating in the game about this move
       # and reply to original request.
       notifier.moveMade(sendNotification, move.player, newState)
+
+      # Send a chat message if chatEvent has been set
+      chat.moveMade(sendChat, req.body.chatEvent, newState)
+      
       res.json(newState)
       next()
 

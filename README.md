@@ -17,6 +17,8 @@ Configuration
 
  * `RULES_PORT_8080_TCP_ADDR` - IP of the rules service
  * `RULES_PORT_8080_TCP_PORT` - Port of the rules service
+ * `CHAT_PORT_8080_TCP_ADDR` - IP of the chat service (optional)
+ * `CHAT_PORT_8080_TCP_PORT` - Port of the chat service (optional)
  * `NOTIFICATIONS_PORT_8080_TCP_ADDR` - IP of the notifications service
  * `NOTIFICATIONS_PORT_8080_TCP_PORT` - Port of the notifications service
  * `API_SECRET` - Secret key used to send notifications
@@ -90,10 +92,13 @@ Use the appropriate `rules-api` service to initiate a new game.
 
 ## Add a move to a game [POST]
 
+Add a move, optionally trigger a chat system event (if "chatEvent" is provided).
+
 ### body (application/json)
 
     {
-        "moveData": { ... }
+        "moveData": { ... },
+        "chatEvent": "pass"
     }
 
 ### response [200] OK

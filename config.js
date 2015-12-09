@@ -4,6 +4,11 @@ module.exports = {
   port: +process.env.PORT || 8000,
   routePrefix: process.env.ROUTE_PREFIX || pkg.api,
 
+  chat: {
+    host: process.env.CHAT_PORT_8080_TCP_ADDR || null,
+    port: +process.env.CHAT_PORT_8080_TCP_PORT || 0
+  },
+
   rules: {
     host: process.env.RULES_PORT_8080_TCP_ADDR || 'localhost',
     port: +process.env.RULES_PORT_8080_TCP_PORT || 8080
