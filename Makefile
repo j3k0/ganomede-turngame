@@ -4,7 +4,7 @@ SHELL = /bin/bash -o pipefail
 all: install test
 
 check: install
-	./node_modules/.bin/eslint src/
+	./node_modules/.bin/eslint src/ tests/
 	./node_modules/.bin/coffeelint -q src tests
 
 test: check
@@ -45,7 +45,7 @@ clean:
 
 docker-prepare:
 	@mkdir -p doc
-	docker-compose up -d --no-recreate couchGames
+	docker-compose up -d --no-recreate redisGames
 
 docker-run: docker-prepare
 	docker-compose run --rm app make run BUNYAN_LEVEL=${BUNYAN_LEVEL}
