@@ -29,7 +29,7 @@ module.exports = (options={}) ->
 
   sendChat = options.sendChat || helpers.Chat.sendFn(1)
   log.info "sendChat:",
-    name: sendChat.name
+    name: sendChat.fname
     details: sendChat.details
 
   #
