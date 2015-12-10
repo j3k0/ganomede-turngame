@@ -28,6 +28,9 @@ module.exports = (options={}) ->
   sendNotification = options.sendNotification || helpers.Notification.sendFn(1)
 
   sendChat = options.sendChat || helpers.Chat.sendFn(1)
+  log.info "sendChat:",
+    name: sendChat.name
+    details: sendChat.details
 
   #
   # Middlewares

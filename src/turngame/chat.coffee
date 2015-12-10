@@ -17,6 +17,7 @@ moveMade = (sendChat, chatEvent, newState, callback) ->
     return callback?()
 
   sendChatData = (ndata, cb) ->
+    log.info "chat.moveMade(): sendChatData()", ndata
     chat = new Chat ndata
     sendChat chat, (err) ->
       if (err)

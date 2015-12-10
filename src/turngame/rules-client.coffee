@@ -29,7 +29,7 @@ class RulesClient
 
   games: (game, callback) ->
     url = @endpoint('/games')
-    @log.info { url:url }, "post /games"
+    # @log.info { url:url }, "post /games"
     @client.post url, game, (err, req, res, body) =>
       if (err)
         @log.error "failed to generate game", err
@@ -47,7 +47,7 @@ class RulesClient
   # callback(err, rulesError, newState)
   moves: (game, callback) ->
     url = @endpoint('/moves')
-    @log.info { url:url }, "post /moves"
+    # @log.info { url:url }, "post /moves"
     @client.post url, game, (err, req, res, body) =>
       if (err)
         restifyError = body && (err instanceof restify.RestError)
