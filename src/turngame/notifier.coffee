@@ -40,7 +40,7 @@ moveMade = (sendNotification, player, newState, callback) ->
         app: newState.type
         title: [ "game_over_title" ]
         message: [ "game_over_message", player ]
-    log.info "push-notification", ndata
+    #log.info "push-notification", ndata
 
     notification = new Notification ndata
 
