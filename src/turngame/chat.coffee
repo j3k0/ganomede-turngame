@@ -17,13 +17,12 @@ moveMade = (sendChat, chatEvent, newState, callback) ->
     return callback?()
 
   sendChatData = (ndata, cb) ->
-    log.info "chat.moveMade(): sendChatData()", ndata
     chat = new Chat ndata
     sendChat chat, (err) ->
       if (err)
         log.error 'chat.moveMade(): send() failed:',
           error: err
-          chat: chat
+          data: ndata
       cb?(err)
 
   sendChatData
@@ -34,9 +33,14 @@ moveMade = (sendChat, chatEvent, newState, callback) ->
   , if newState.status == "gameover" then undefined else callback
 
   if newState.status == "gameover"
+    # XXX we check if gameData has a player array with scores
+    # this is a shortcut to have this work quickly with a specific
+    # game in mind...
+    pws = newState.gameData?.players || []
+    scores = pws.map (p) -> p.score
     message = "gameover:" +
       newState.players.join(",") +
-      ":" + newState.scores.join(",")
+      ":" + scores.join(",")
     sendChatData
       type: newState.type
       users: newState.players
