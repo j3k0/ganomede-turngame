@@ -39,6 +39,7 @@ module.exports = (options={}) ->
   # Populates req.params.user with value returned from authDb.getAccount()
   authMiddleware = helpers.restify.middlewares.authdb.create
     authdbClient: authdbClient
+    secret: config.apiSecret
 
   # Populates req.params.game with game's state based in req.params.gameId
   retrieveGameMiddleware = (req, res, next) ->
@@ -171,7 +172,7 @@ module.exports = (options={}) ->
 
       # Send a chat message if chatEvent has been set
       chat.moveMade(sendChat, req.body.chatEvent, newState)
-      
+
       res.json(newState)
       next()
 

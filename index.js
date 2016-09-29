@@ -1,3 +1,5 @@
+'use strict';
+
 require('coffee-script/register');
 
 // Use New Relic if LICENSE_KEY has been specified.

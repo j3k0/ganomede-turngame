@@ -10,6 +10,9 @@ check: install
 test: check
 	./node_modules/.bin/mocha -b --recursive --compilers coffee:coffee-script/register tests | ./node_modules/.bin/bunyan -l ${BUNYAN_LEVEL}
 
+testw:
+	./node_modules/.bin/mocha --watch -b --recursive --compilers coffee:coffee-script/register tests | ./node_modules/.bin/bunyan -l ${BUNYAN_LEVEL}
+
 coverage: test
 	@mkdir -p doc
 

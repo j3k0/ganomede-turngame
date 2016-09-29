@@ -86,6 +86,12 @@ describe "turngame-api", ->
           .get endpoint("/auth/invalid-token/games/#{game.id}")
           .expect 401, done
 
+      it 'allows auth with API_SECRET', (done) ->
+        theSecretToken = "#{process.env.API_SECRET}.#{users.alice.username}"
+        go()
+          .get(endpoint("/auth/#{theSecretToken}/games/#{game.id}"))
+          .expect(200, done)
+
       it 'only game participants are allowed', (done) ->
         go()
           .get endpoint("/auth/#{users.jdoe.token}/games/#{game.id}")
