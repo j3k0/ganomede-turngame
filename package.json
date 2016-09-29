@@ -14,16 +14,10 @@
   "license": "GPL",
   "dependencies": {
     "authdb": "^0.3.0",
-    "blanket": "^1.1.6",
     "bunyan": "^1.2.3",
     "coffee-script": "^1.8.0",
-    "coffeelint": "^1.6.1",
-    "concat-stream": "^1.4.7",
-    "eslint": "^0.10.0",
     "forever": "^0.13.0",
     "ganomede-helpers": "^1.0.1",
-    "jshint": "^2.5.10",
-    "mocha": "^2.0.1",
     "newrelic": "^1.20.2",
     "redis": "^0.12.1",
     "restify": "^2.8.3",
@@ -39,6 +33,10 @@
     }
   },
   "devDependencies": {
+    "blanket": "^1.1.6",
+    "coffeelint": "^1.6.1",
+    "eslint": "^0.10.0",
+    "mocha": "^2.0.1",
     "expect.js": "^0.3.1",
     "fakeredis": "^0.3.1",
     "ganomede-substract-game": "^1.1.0",
