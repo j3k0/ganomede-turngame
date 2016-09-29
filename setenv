@@ -1,4 +1,4 @@
-NODE_VERSION=v0.10.41
+NODE_VERSION=v6.7.0
 
 nvm ls $NODE_VERSION || nvm install $NODE_VERSION
 nvm use $NODE_VERSION
