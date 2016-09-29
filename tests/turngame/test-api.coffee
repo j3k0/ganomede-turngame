@@ -2,11 +2,11 @@ supertest = require 'supertest'
 fakeRedis = require 'fakeredis'
 expect = require 'expect.js'
 vasync = require 'vasync'
+authdb = require 'authdb'
 api = require '../../src/turngame'
 Games = require '../../src/turngame/games'
 config = require '../../config'
 server = require '../../src/server'
-fakeAuthDb = require '../fake-authdb'
 samples = require './sample-data'
 
 users = samples.users
@@ -16,7 +16,9 @@ moves = samples.moves
 
 describe "turngame-api", ->
   redis = fakeRedis.createClient(__filename)
-  authdb = fakeAuthDb.createClient()
+  authdb = authdb.createClient({
+    redisClient: fakeRedis.createClient("#auth-{__filename}")
+  })
   games = new Games(redis, config.redis.prefix)
   go = supertest.bind(supertest, server)
   substract = require "ganomede-substract-game"
