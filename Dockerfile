@@ -1,4 +1,4 @@
-FROM node:0.10.41
+FROM node:6
 EXPOSE 8000
 MAINTAINER Jean-Christophe Hoelt <hoelt@fovea.cc>
 RUN useradd app -d /home/app
@@ -18,5 +18,5 @@ RUN chown -R app /home/app
 
 WORKDIR /home/app/code
 USER app
-RUN make
+# RUN make
 CMD node_modules/.bin/forever index.js

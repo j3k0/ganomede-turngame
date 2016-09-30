@@ -2,11 +2,11 @@ supertest = require 'supertest'
 fakeRedis = require 'fakeredis'
 expect = require 'expect.js'
 vasync = require 'vasync'
+authdb = require 'authdb'
 api = require '../../src/turngame'
 Games = require '../../src/turngame/games'
 config = require '../../config'
 server = require '../../src/server'
-fakeAuthDb = require '../fake-authdb'
 samples = require './sample-data'
 
 users = samples.users
@@ -16,7 +16,9 @@ moves = samples.moves
 
 describe "turngame-api", ->
   redis = fakeRedis.createClient(__filename)
-  authdb = fakeAuthDb.createClient()
+  authdb = authdb.createClient({
+    redisClient: fakeRedis.createClient("#auth-{__filename}")
+  })
   games = new Games(redis, config.redis.prefix)
   go = supertest.bind(supertest, server)
   substract = require "ganomede-substract-game"
@@ -85,6 +87,12 @@ describe "turngame-api", ->
         go()
           .get endpoint("/auth/invalid-token/games/#{game.id}")
           .expect 401, done
+
+      it 'allows auth with API_SECRET', (done) ->
+        theSecretToken = "#{process.env.API_SECRET}.#{users.alice.username}"
+        go()
+          .get(endpoint("/auth/#{theSecretToken}/games/#{game.id}"))
+          .expect(200, done)
 
       it 'only game participants are allowed', (done) ->
         go()

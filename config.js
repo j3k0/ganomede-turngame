@@ -1,8 +1,14 @@
+'use strict';
+
 var pkg = require("./package.json");
 
 module.exports = {
   port: +process.env.PORT || 8000,
   routePrefix: process.env.ROUTE_PREFIX || pkg.api,
+
+  apiSecret: process.env.hasOwnProperty('API_SECRET') && process.env.API_SECRET
+    ? process.env.API_SECRET
+    : null,
 
   chat: {
     host: process.env.CHAT_PORT_8080_TCP_ADDR || null,
