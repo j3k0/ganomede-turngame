@@ -20,7 +20,7 @@
     "ganomede-helpers": "^1.0.1",
     "newrelic": "^1.20.2",
     "redis": "^0.12.1",
-    "restify": "^2.8.3",
+    "restify": "^4.2.0",
     "vasync": "^1.6.2"
   },
   "config": {
