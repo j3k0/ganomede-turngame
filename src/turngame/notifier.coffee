@@ -23,7 +23,12 @@ moveMade = (sendNotification, player, newState, callback) ->
       to: username
       type: moveMade.NOTIFICATION_TYPE
       data:
-        game: newState
+        game:
+          id: newState.id
+          players: newState.players
+          status: newState.status
+          turn: newState.turn
+          type: newState.type
 
     # Push notification
     # log.info "push-notification",
