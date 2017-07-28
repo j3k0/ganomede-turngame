@@ -6,7 +6,7 @@ authdb = require 'authdb'
 api = require '../../src/turngame'
 Games = require '../../src/turngame/games'
 config = require '../../config'
-server = require '../../src/server'
+server = require('../../src/server').createServer()
 samples = require './sample-data'
 
 users = samples.users
