@@ -6,6 +6,11 @@ module.exports = {
   port: +process.env.PORT || 8000,
   routePrefix: process.env.ROUTE_PREFIX || pkg.api,
 
+  http: {
+    port: +process.env.PORT || 8000,
+    prefix: process.env.ROUTE_PREFIX || pkg.api,
+  },
+
   apiSecret: process.env.hasOwnProperty('API_SECRET') && process.env.API_SECRET
     ? process.env.API_SECRET
     : null,
