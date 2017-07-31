@@ -1,6 +1,6 @@
 {
   "name": "turngame",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "api": "turngame/v1",
   "description": "Ganomede turngame micro service",
   "main": "index.js",
