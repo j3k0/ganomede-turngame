@@ -34,7 +34,9 @@ module.exports = {
     host: process.env.REDIS_GAMES_PORT_6379_TCP_ADDR || 'localhost',
     port: +process.env.REDIS_GAMES_PORT_6379_TCP_PORT || 6379,
     prefix: pkg.api
-  }
+  },
+
+  notifyFullState: !!process.env.NOTIFY_FULL_STATE
 // COUCH_GAMES_PORT_5984_TCP_ADDR - IP of the games couchdb
 // COUCH_GAMES_PORT_5984_TCP_PORT
 };

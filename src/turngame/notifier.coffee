@@ -2,6 +2,7 @@ vasync = require 'vasync'
 helpers = require 'ganomede-helpers'
 log = require '../log'
 pkg = require '../../package.json'
+config = require '../../config'
 
 Notification = helpers.Notification
 noop = () ->
@@ -18,17 +19,21 @@ moveMade = (sendNotification, player, newState, callback) ->
 
   send = (username, cb) ->
 
+    game = newState
+    if !config.notifyFullState
+      game =
+        id: newState.id
+        players: newState.players
+        status: newState.status
+        turn: newState.turn
+        type: newState.type
+
     ndata =
       from: pkg.api
       to: username
       type: moveMade.NOTIFICATION_TYPE
       data:
-        game:
-          id: newState.id
-          players: newState.players
-          status: newState.status
-          turn: newState.turn
-          type: newState.type
+        game: game
 
     # Push notification
     # log.info "push-notification",
