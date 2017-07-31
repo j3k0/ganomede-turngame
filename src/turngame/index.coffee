@@ -100,6 +100,7 @@ module.exports = (options={}) ->
 
   retrieveGame = (req, res, next) ->
     res.json(req.params.game)
+    next()
 
   retrieveMoves = (req, res, next) ->
     games.moves req.params.game.id, (err, moves) ->
