@@ -45,13 +45,13 @@ moveMade = (sendNotification, player, newState, callback) ->
         app: newState.type
         title: [ "your_turn_title" ]
         message: [ "your_turn_message", player ]
-        messageArgsTypes: [ 'username' ]
+        messageArgsTypes: [ 'directory:name' ]
     else if newState.status == "gameover"
       ndata.push =
         app: newState.type
         title: [ "game_over_title" ]
         message: [ "game_over_message", player ]
-        messageArgsTypes: [ 'username' ]
+        messageArgsTypes: [ 'directory:name' ]
     #log.info "push-notification", ndata
 
     notification = new Notification ndata
