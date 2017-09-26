@@ -21,7 +21,7 @@
     "newrelic": "^1.20.2",
     "node-statsd": "^0.1.1",
     "redis": "^0.12.1",
-    "restify": "^4.1.0",
+    "restify": "^5.0.1",
     "vasync": "^1.6.2"
   },
   "config": {
