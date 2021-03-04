@@ -45,7 +45,7 @@ class RulesClient
   # POST /moves
   # @game should contain moveData to post
   # callback(err, rulesError, newState)
-  moves: (game, callback) ->
+  moves: (game, callback, canRetry = true) ->
     url = @endpoint('/moves')
     # @log.info { url:url }, "post /moves"
     @client.post url, game, (err, req, res, body) =>
@@ -58,9 +58,14 @@ class RulesClient
             game: game
           return callback(null, err)
         else
-          @log.error 'RulesClient.moves() failed',
+          @log.warn({
             err: err
             game: game
+          }, 'RulesClient.moves() failed')
+          # this is an ECONNRESET, let's retry
+          if err.code == 'ECONNRESET' && canRetry
+            @log.warn 'Retrying the request'
+            return @moves(game, callback, false)
           return callback(err)
 
       @copyGameFields game, body
