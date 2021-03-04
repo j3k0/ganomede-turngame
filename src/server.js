@@ -30,6 +30,7 @@ const initReqGanomede = (req, res, next) => {
 // Automatically add a request-id to the response
 const setRequestId = (req, res, next) => {
   res.setHeader('x-request-id', req.id());
+  req._id = req.header('x-request-id') || req._id;
   req.log = req.log.child({req_id: req.id()});
   next();
 };
@@ -59,11 +60,15 @@ const createServer = () => {
     log: logger
   });
 
+  // server.pre(restify.plugins.pre.reqIdHeaders({
+  //   headers: [ 'X-Request-Id', 'Request-Id' ],
+  // }));
+
+  server.use(setRequestId);
   server.use(requestLogger);
   server.use(restify.queryParser());
   server.use(restify.bodyParser());
   server.use(initReqGanomede);
-  server.use(setRequestId);
 
   // Send audit statistics
   const sendAuditStats = require('./send-audit-stats');
