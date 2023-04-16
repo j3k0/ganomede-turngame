@@ -17,7 +17,7 @@
     "coffee-script": "^1.8.0",
     "forever": "^0.13.0",
     "ganomede-helpers": "^1.0.1",
-    "newrelic": "^1.20.2",
+    "newrelic": "^9.15.0",
     "node-statsd": "^0.1.1",
     "redis": "^0.12.1",
     "restify": "^4.1.0",
