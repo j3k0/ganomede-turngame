@@ -1,0 +1,1 @@
+declare module 'ganomede-substract-game';

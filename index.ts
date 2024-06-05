@@ -1,45 +1,32 @@
 'use strict';
 
-require('coffee-script/register');
+import cluster from 'cluster';
+import log from './src/log';
+import config from './src/config';
+import { Server } from 'restify';
+import { InternalError } from 'restify-errors';
+import main from './src/main';
 
-// Use New Relic if LICENSE_KEY has been specified.
-if (process.env.NEW_RELIC_LICENSE_KEY) {
-    if (!process.env.NEW_RELIC_APP_NAME) {
-        var pk = require('./package.json');
-        process.env.NEW_RELIC_APP_NAME = pk.api;
-    }
-    require('newrelic');
-}
-
-var cluster = require("cluster");
-var log = require("./src/log");
-var config = require('./config');
-
-if (cluster.isMaster) {
-
+if (cluster.isPrimary) {
     // master
     log.info("running with env", process.env);
     log.info("running with config", config);
     cluster.fork();
     cluster.fork(); // Start 2, so when 1 fails there's not downtime.
-    cluster.on("disconnect", function(worker) {
+    cluster.on("disconnect", (worker) => {
         log.error("disconnect!");
         cluster.fork();
     });
-}
-else {
-
+} else {
     // worker
-    var main = require("./src/main");
-    var server = require('./src/server').createServer();
+    const server: Server = require('./src/server').createServer();
 
-    // Intitialize backend, add routes
+    // Initialize backend, add routes
     main.initialize();
     main.addRoutes(config.routePrefix, server);
 
     // Handle uncaughtException, kill the worker
-    server.on('uncaughtException', function (req, res, route, err) {
-
+    server.on('uncaughtException', function (req, res, route, err: Error) {
         // Log the error
         log.error(err);
 
@@ -59,12 +46,10 @@ else {
             // Let the master know we're dead.  This will trigger a
             // 'disconnect' in the cluster master, and then it will fork
             // a new worker.
-            cluster.worker.disconnect();
+            cluster.worker?.disconnect();
 
-            var InternalError = require('restify').InternalError;
             res.send(new InternalError(err, err.message || 'unexpected error'));
-        }
-        catch (err2) {
+        } catch (err2) {
             log.error("Error sending 500!");
             log.error(err2);
         }

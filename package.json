@@ -6,41 +6,43 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "start:ts": "ts-node index.ts",
+    "build": "tsc",
+    "buildw": "tsc -w",
     "test": "API_SECRET=42 make test",
     "testw": "API_SECRET=42 make testw"
   },
   "author": "Jean-Christophe Hoelt <hoelt@fovea.cc>",
   "license": "GPL",
   "dependencies": {
-    "authdb": "^0.3.0",
-    "bunyan": "^1.2.3",
-    "coffee-script": "^1.8.0",
-    "forever": "^0.13.0",
-    "ganomede-helpers": "^1.0.1",
-    "newrelic": "^1.20.2",
+    "axios": "^1.7.2",
+    "bunyan": "^1.8.15",
+    "ganomede-helpers": "^1.0.6",
+    "ioredis": "^5.4.1",
     "node-statsd": "^0.1.1",
-    "redis": "^0.12.1",
-    "restify": "^4.1.0",
-    "vasync": "^1.6.2"
-  },
-  "config": {
-    "blanket": {
-      "pattern": [
-        "src"
-      ],
-      "data-cover-never": "node_modules",
-      "loader": "./node-loaders/coffee-script"
-    }
+    "restify": "^11.1.0",
+    "restify-errors": "^8.0.2",
+    "ts-node": "^10.9.2",
+    "vasync": "^1.6.4"
   },
   "devDependencies": {
-    "blanket": "^1.1.6",
-    "coffeelint": "^1.6.1",
-    "eslint": "^4.3.0",
+    "@types/bunyan": "^1.8.11",
+    "@types/expect.js": "^0.3.32",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.13",
+    "@types/redis": "^4.0.11",
+    "@types/restify": "^8.5.12",
+    "@types/restify-errors": "^4.3.9",
+    "@types/supertest": "^6.0.2",
+    "eslint": "^9.3.0",
     "expect.js": "^0.3.1",
-    "fakeredis": "^0.3.1",
-    "ganomede-substract-game": "^1.1.0",
-    "istanbul": "https://github.com/duereg/istanbul/archive/master.tar.gz",
-    "mocha": "^2.0.1",
-    "supertest": "^0.15.0"
+    "fakeredis": "^2.0.0",
+    "ganomede-substract-game": "^1.2.0",
+    "ioredis-mock": "^8.9.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^10.4.0",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.0.0",
+    "typescript": "^5.4.5"
   }
 }

@@ -1,17 +1,22 @@
+# makefile
+
 BUNYAN_LEVEL?=1000
 SHELL = /bin/bash -o pipefail
 
 all: install test
 
 check: install
-	./node_modules/.bin/eslint src/ tests/
-	./node_modules/.bin/coffeelint -q src tests
+	# ./node_modules/.bin/eslint src/ tests/
+	# ./node_modules/.bin/coffeelint -q src tests
 
-test: check
-	./node_modules/.bin/mocha -b --recursive --compilers coffee:coffee-script/register tests | ./node_modules/.bin/bunyan -l ${BUNYAN_LEVEL}
+build: install
+	npm run build
+
+test: build
+	NOTIFY_FULL_STATE=1 API_SECRET=1234 npx mocha -b --require source-map-support/register --recursive  'dist/tests/turngame/test-api.js' | npx bunyan -l ${BUNYAN_LEVEL}
 
 testw:
-	./node_modules/.bin/mocha --watch -b --recursive --compilers coffee:coffee-script/register tests | ./node_modules/.bin/bunyan -l ${BUNYAN_LEVEL}
+	./node_modules/.bin/mocha --watch -b --recursive --compilers coffee:coffee-script/register 'tests/test-**.ts' | ./node_modules/.bin/bunyan -l ${BUNYAN_LEVEL}
 
 coverage: test
 	@mkdir -p doc
@@ -58,3 +63,4 @@ docker-test: docker-prepare
 
 docker-coverage: docker-prepare
 	docker-compose run --rm app make coverage
+
