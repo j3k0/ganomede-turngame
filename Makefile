@@ -13,10 +13,10 @@ build: install
 	npm run build
 
 test: build
-	NOTIFY_FULL_STATE=1 API_SECRET=1234 npx mocha -b --require source-map-support/register --recursive  'dist/tests/turngame/test-api.js' | npx bunyan -l ${BUNYAN_LEVEL}
+	NOTIFY_FULL_STATE=1 API_SECRET=1234 npx mocha -b --require source-map-support/register --recursive  'dist/tests/**/test-**.js' | npx bunyan -l ${BUNYAN_LEVEL}
 
 testw:
-	./node_modules/.bin/mocha --watch -b --recursive --compilers coffee:coffee-script/register 'tests/test-**.ts' | ./node_modules/.bin/bunyan -l ${BUNYAN_LEVEL}
+	npx mocha --watch -b --recursive 'tests/**/test-**.ts' | npx bunyan -l ${BUNYAN_LEVEL}
 
 coverage: test
 	@mkdir -p doc
