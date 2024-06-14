@@ -94,6 +94,9 @@ export function turnGameApi(options: TurnGameApiOptions = {}) {
   // Routes
   //
 
+  /**
+   * Handler for creating a new game.
+   */
   const createGame = (req: restify.Request, res: restify.Response, next: restify.Next) => {
     const gameId = req.params.gameId;
     const type = req.body?.type;
