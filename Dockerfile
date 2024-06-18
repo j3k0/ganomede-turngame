@@ -1,19 +1,24 @@
-FROM node:12
+FROM node:20-slim
 
 EXPOSE 8000
 MAINTAINER Jean-Christophe Hoelt <hoelt@fovea.cc>
 
+# Create 'app' user
 RUN useradd app -d /home/app
 WORKDIR /home/app/code
 
+# Install NPM packages
 COPY package.json /home/app/code/package.json
 RUN npm install
 
-COPY .eslintrc .eslintignore config.js coffeelint.json newrelic.js Makefile index.js /home/app/code/
+# Copy app source files
+COPY tsconfig.json Makefile index.ts /home/app/code/
 COPY tests /home/app/code/tests
 COPY src /home/app/code/src
-
 RUN chown -R app /home/app
-USER app
 
-CMD node index.js
+# Run and build as "app" user
+USER app
+RUN npm run build
+
+CMD npm run start:ts

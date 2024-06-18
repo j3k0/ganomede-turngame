@@ -4,7 +4,7 @@ app:
      - ./src:/home/app/code/src
      - ./tests:/home/app/code/tests
      - ./doc:/home/app/code/doc
-    command: npm start
+    command: npm run start:ts
     # ports:
     #  - "8000:8000"
     links:
@@ -22,3 +22,4 @@ redisGames:
     image: tutum/redis:latest
     environment:
      - "REDIS_PASS=**None**"
+
