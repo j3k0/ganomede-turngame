@@ -1,11 +1,11 @@
 import { Redis } from 'ioredis';
 import log from '../log';
-import { BaseGameConfig, BaseGameData, BaseMoveData, GameState } from '../types';
+import { GameState } from '../types';
 import { Move } from '../types';
 
 const PREFIX_SEPARATOR = ':';
 
-export class Games<Config extends BaseGameConfig, Data extends BaseGameData, MoveData extends BaseMoveData, State extends GameState<Config, Data> = GameState<Config, Data>> {
+export class Games {
   private redis: Redis;
   private prefix: string;
   static EXPIRE_SECONDS = 30 * 24 * 3600; // 30 days
@@ -25,12 +25,12 @@ export class Games<Config extends BaseGameConfig, Data extends BaseGameData, Mov
     await this.redis.expire(this.key(id, Games.MOVES_POSTFIX), Games.EXPIRE_SECONDS);
   }
 
-  private async _setState(id: string, state: State): Promise<void> {
+  private async _setState(id: string, state: GameState): Promise<void> {
     await this.redis.set(this.key(id), JSON.stringify(state));
     await this._updateExpire(id);
   }
 
-  async setState(id: string, state: State, callback: (err: Error | null) => void): Promise<void> {
+  async setState(id: string, state: GameState, callback: (err: Error | null) => void): Promise<void> {
     try {
       await this._setState(id, state);
       process.nextTick(() => callback(null));
@@ -45,7 +45,7 @@ export class Games<Config extends BaseGameConfig, Data extends BaseGameData, Mov
     return this.redis.get(this.key(id));
   }
 
-  async state(id: string, callback: (err: Error | null, state?: State) => void): Promise<void> {
+  async state(id: string, callback: (err: Error | null, state?: GameState) => void): Promise<void> {
     try {
       const json = await this._state(id);
       callback(null, json ? JSON.parse(json) : null);
@@ -56,12 +56,12 @@ export class Games<Config extends BaseGameConfig, Data extends BaseGameData, Mov
     }
   }
 
-  private async _addMove(id: string, state: State, move: Move<MoveData>): Promise<void> {
+  private async _addMove(id: string, state: GameState, move: Move): Promise<void> {
     await this.redis.rpush(this.key(id, Games.MOVES_POSTFIX), JSON.stringify(move));
     await this._setState(id, state);
   }
 
-  async addMove(id: string, newState: State, move: Move<MoveData>, callback: (err: Error | null) => void): Promise<void> {
+  async addMove(id: string, newState: GameState, move: Move, callback: (err: Error | null) => void): Promise<void> {
     try {
       await this._addMove(id, newState, move);
       callback(null);
@@ -76,7 +76,7 @@ export class Games<Config extends BaseGameConfig, Data extends BaseGameData, Mov
     return this.redis.lrange(this.key(id, Games.MOVES_POSTFIX), 0, -1);
   }
 
-  async moves(id: string, callback: (err: Error | null, moves?: Move<MoveData>[]) => void): Promise<void> {
+  async moves(id: string, callback: (err: Error | null, moves?: Move[]) => void): Promise<void> {
     try {
       const moves = await this._moves(id);
       callback(null, moves.map((move: string) => JSON.parse(move)));

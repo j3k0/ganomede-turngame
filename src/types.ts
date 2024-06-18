@@ -1,36 +1,70 @@
-export interface BaseMoveData {
-    action?: 'kickOut' | 'resign' | string;
-}
 
-export interface BaseGameConfig {
-}
+/**
+ * Rules specific move specification.
+ * 
+ * No constraints.
+ */
+export type MoveData = any;
 
-export interface BaseGameData {
-    players?: { score: number }[];
-}
+/**
+ * Rules specific game specification.
+ * 
+ * No constraints.
+ */
+export type GameConfig = any;
 
-export interface Move<MoveData extends BaseMoveData = BaseMoveData> {
-    player?: string; // Assuming player information might be included
+/**
+ * Rules specific dynamic game state (that changes every move)
+ */
+export type GameData = any;
+
+/**
+ * Move sent to the turngame server
+ */
+export interface Move {
+    /** Player that made the move (if applicable) */
+    player?: string;
+
+    /** Date-Time the move was made in ISO-8601 format (will be missing in legacy games while we migrate) */
+    date: string;
+
+    /** Rules specific move specification */
     moveData: MoveData;
 }
 
-export interface GameState<GameConfig extends BaseGameConfig = BaseGameConfig, GameData extends BaseGameData = BaseGameData> {
+/**
+ * State of a game stored by the turngame server.
+ */
+export interface GameState {
+    /** Unique identifier */
     id: string;
+    /** Game rules type */
     type: string;
+    /** List of participant in that game */
     players: string[];
-    /** Scores are set when the game is over */
+    /** Scores set when the game is over */
     scores?: number[];
+    /** Current player */
     turn: string;
-    status: string;
+    /** Status of the game */
+    status?: 'active' | 'gameover';
+    /**
+     * Game specification
+     * 
+     * i.e. Things one can customize when creating the game
+     */
     gameConfig?: GameConfig;
+    /** Game data corresponds to the state of the game in the "rules" service. */
     gameData?: GameData;
 }
 
-export interface GameStateWithMove<GameConfig extends BaseGameConfig = BaseGameConfig, GameData extends BaseGameData = BaseGameData, MoveData extends BaseMoveData = BaseMoveData> extends GameState<GameConfig, GameData> {
+export interface GameStateWithMove extends GameState {
+    /** Date-time the move was made in ISO-8601 format */
+    moveDate: string;
     moveData?: MoveData;
 }
 
-export interface GameCreationData<GameConfig extends BaseGameConfig = BaseGameConfig> {
+export interface GameCreationData {
     id: string;
     players: string[];
     type?: string;

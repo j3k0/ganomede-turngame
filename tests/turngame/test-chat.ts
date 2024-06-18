@@ -27,13 +27,10 @@ describe('Chat', () => {
       id: 'game123',
       type: 'turnbased',
       players: ['alice', 'bob'],
+      scores: [12, 13],
       turn: '',
       status: 'gameover',
       gameData: {
-        players: [
-          { score: 12 },
-          { score: 13 }
-        ]
       },
     }, () => {
       expect(sent.length).to.be(2);

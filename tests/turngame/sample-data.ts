@@ -1,16 +1,19 @@
-import { BaseGameData, BaseMoveData, GameCreationData, GameState, Move } from "../../src/types";
+import { GameCreationData, GameState, Move } from "../../src/types";
 
 type User = {
   username: string;
   token: string;
 };
 
-interface GameData extends BaseGameData {
+interface GameData {
   total: number;
   nMoves: number;
 };
 
-type TestGameState = GameState<{}, GameData>;
+type TestGameState = GameState & {
+    /** Game data corresponds to the state of the game in the "rules" service. */
+    gameData?: GameData;
+};
 
 // type Game = {
 //   id: string;
@@ -22,10 +25,11 @@ type TestGameState = GameState<{}, GameData>;
 //   gameData: GameData;
 // };
 
-export type TestMove = Move<{
-  action?: string;
-  number: number;
-}> & {
+export type TestMove = Move & {
+  moveData: {
+    action?: string;
+    number: number;
+  };
   chatEvent?: string;
 };
 //   player: string;
@@ -70,11 +74,16 @@ const newgameOutcome: TestGameState = {
 };
 
 const moves: TestMove[] = [
-  { player: game.players[0], moveData: { number: 10 } },
+  {
+    player: game.players[0],
+    date: new Date('2024-01-01').toISOString(),
+    moveData: { number: 10 }
+  },
 ];
 
 const nextMove: TestMove = {
   player: game.players[1],
+  date: new Date('2024-01-02').toISOString(),
   moveData: { number: 89 },
 };
 
@@ -88,6 +97,7 @@ gameNew.gameData = {
 
 const thirdMove: TestMove = {
   player: game.players[0],
+  date: new Date('2024-01-03').toISOString(),
   moveData: { number: 1 },
   chatEvent: 'small_move',
 };

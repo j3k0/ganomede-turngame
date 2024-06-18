@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import log from '../log';
 import { RestError } from 'restify-errors';
-import { GameState, GameStateWithMove, GameCreationData, BaseMoveData, Move } from '../types';
+import { GameState, GameStateWithMove, GameCreationData } from '../types';
 
 function clone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
@@ -106,9 +106,12 @@ export class RulesClient {
    * @param initialState - The initial state of the game.
    * @param moves - An array of moves, each containing moveData and a timestamp of when the move was made.
    * @param callback - A callback function that takes an error and the final state.
-   */
-  async replay<MoveData extends BaseMoveData = BaseMoveData>(initialState: GameState, moves: MoveData[], callback: (err: Error | null, finalState?: GameState) => void): Promise<void> {
-    let state: GameStateWithMove = clone(initialState);
+   *
+  async replay(initialState: GameState, moves: MoveData[], callback: (err: Error | null, finalState?: GameState) => void): Promise<void> {
+    let state: GameStateWithMove = {
+      ...clone(initialState),
+      // moveDate: 
+    } 
 
     try {
       for (const move of moves) {
@@ -127,6 +130,7 @@ export class RulesClient {
       process.nextTick(() => callback(err as Error));
     }
   }
+  */
 }
 
 export default RulesClient;
